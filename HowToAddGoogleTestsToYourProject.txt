@@ -1,0 +1,65 @@
+Добавление google test-ов в проект
+основано на статье https://habrahabr.ru/company/infopulse/blog/164471/
+
+скачать фреймворк https://github.com/google/googletest
+
+открыть проект gtest.sln из 
+\googletest-master\googletest-master\googletest\msvc\
+там два проекта gtest.sln и gtest-md.sln 
+(различия читать http://msdn.microsoft.com/en-us/library/2kzt1wy3%28v=vs.80%29.aspx) 
+
+собираем проект в Debug конфигурации = будет создана либа gtestd.lib
+(путь до нее    C:\Users\user\Documents\Visual Studio 2015\Projects\googletest-master\googletest-master\googletest\msvc\gtest\Debug    )
+собираем проект в Release конфигурации = будет создана либа gtest.lib
+(путь до нее    C:\Users\user\Documents\Visual Studio 2015\Projects\googletest-master\googletest-master\googletest\msvc\gtest\Release  )
+
+открываем solution который хотим тестировать и проект в котором будут тесты
+
+добавляем в папку с проектом папки include и msvc из
+\googletest-master\googletest-master\googletest\include
+\googletest-master\googletest-master\googletest\msvc
+
+в свойствах проекта указываем зависимости для этих либ:
+
+Страницы Свойств -> Свойства Конфигурации -> С/С++ -> Общие -> Дополнительные каталоги включаемых файлов = 
+/*Для  Debug конфигурации */ = вписываем С:\Users\user\Documents\Visual Studio 2015\Projects\gtestexample\include\
+/*Для Release конфигурации*/ = вписываем С:\Users\user\Documents\Visual Studio 2015\Projects\gtestexampleinclude\
+
+Страницы Свойств -> Свойства Конфигурации -> С/С++ -> Создание кода -> Библиотека времени выполнения =
+/*Для  Debug конфигурации */ = выбираем Многопоточная (/MTd)
+/*Для Release конфигурации*/ = выбираем Многопоточная (/MT)
+
+Страницы Свойств -> Свойства Конфигурации -> Компоновщик -> Общие -> Дополнительные каталоги библиотек =
+/*Для  Debug конфигурации */ = вписываем С:\Users\user\Documents\Visual Studio 2015\Projects\gtestexample\msvc\gtest\Debug
+/*Для Release конфигурации*/ = вписываем С:\Users\user\Documents\Visual Studio 2015\Projects\gtestexample\msvc\gtest\Release
+
+Страницы Свойств -> Свойства Конфигурации -> Компоновщик -> Ввод -> Дополнительные зависимости = 
+/*Для  Debug конфигурации */ = вписываем gtestd.lib
+/*Для Release конфигурации*/ = вписываем gtest.lib
+
+пример кода который должен работать после этих действий:
+
+#include "gtest\gtest.h"
+
+class CRectTest : public ::testing::Test {
+};
+
+TEST_F(CRectTest, TwiceTwoIsFour)
+{
+	ASSERT_TRUE(2 + 2 == 4);
+}
+
+int main(int argc, char **argv) {
+	::testing::InitGoogleTest(&argc, argv);
+	RUN_ALL_TESTS();
+	system("pause");
+	return 0;
+}
+
+
+
+
+
+
+
+
